@@ -1,0 +1,7 @@
+{
+  "chat.mcp.serverSampling": {
+    "zomato-client/.vscode/mcp.json: io.github.upstash/context7": {
+      "allowedModels": ["copilot/auto"]
+    }
+  }
+}
