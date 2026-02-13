@@ -10,18 +10,25 @@ import { useEffect, useRef } from "react";
 import { z } from "zod";
 
 const emailSchema = z.email("Invalid email address");
-
+const contactNoSchema = z
+  .string()
+  .regex(
+    /^\+8801[3-9]\d{8}$/,
+    "Must be a valid Bangladesh mobile number (+8801XXXXXXXXX)",
+  )
+  .length(14);
 const passwordSchema = z
   .string()
   .min(8, "Password must be at least 8 characters");
 
-export default function SignInPage() {
+export default function SignUpPage() {
   const backgroundRef = useRef<HTMLDivElement>(null);
   const foodRef = useRef<(HTMLDivElement | null)[]>([]);
 
   const form = useForm({
     defaultValues: {
       email: "",
+      contactNo: "",
       password: "",
     },
     onSubmit: async ({ value }) => {
@@ -176,6 +183,38 @@ export default function SignInPage() {
                 </div>
               )}
             </form.Field>
+            {/* Email Field */}
+            <form.Field
+              name="contactNo"
+              validators={{
+                onChange: contactNoSchema,
+              }}
+            >
+              {(field) => (
+                <div className="mb-4">
+                  <Label htmlFor={field.name} className="block mb-2">
+                    Contact Number
+                  </Label>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="text"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="+88019032..."
+                    className="h-12"
+                  />
+                  {field.state.meta.errors.length > 0 && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {field.state.meta.errors
+                        .map((e) => e?.message)
+                        .join(", ")}
+                    </p>
+                  )}
+                </div>
+              )}
+            </form.Field>
 
             {/* Password Field */}
             <form.Field
@@ -213,47 +252,21 @@ export default function SignInPage() {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full  bg-pink-600 hover:bg-pink-700 text-white h-12 text-base font-semibold"
+              className="w-full cursor-pointer bg-pink-600 hover:bg-pink-700 text-white h-12 text-base font-semibold"
             >
-              Sign In
+              Sign up
             </Button>
           </form>
 
-          {/* Divider */}
-          <div className="flex items-center mb-6">
-            <div className="flex-1 border-t border-gray-300"></div>
-            <span className="px-3 text-gray-400 text-sm">or</span>
-            <div className="flex-1 border-t border-gray-300"></div>
-          </div>
-
-          {/* Sign Up Button */}
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              asChild
-              className="flex-1 h-12 text-base font-semibold border-2 border-gray-900 text-gray-900 hover:bg-gray-50"
-              onClick={() => {}}
-            >
-              <Link href="/sign-up">Sign up</Link>
-            </Button>
-            <Button
-              variant="outline"
-              asChild
-              className="flex-1 h-12 text-base font-semibold border-2 border-gray-900 text-gray-900 hover:bg-gray-50"
-              onClick={() => {}}
-            >
-              <Link href="/sign-up-restaurant">Sign up as Restaurant</Link>
-            </Button>
-          </div>
           {/* Footer */}
-          <p className="text-sm text-gray-600 text-center mt-2">
-            Don&apos;t have an account?
+          <p className="text-sm text-gray-600 text-center">
+            Already have an account?
             <Link
-              href="/sign-up"
+              href="/sign-in"
               className="text-pink-600 hover:text-pink-700 font-medium"
             >
               {" "}
-              Sign up
+              Sign in
             </Link>{" "}
           </p>
         </div>
