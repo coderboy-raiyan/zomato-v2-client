@@ -2,18 +2,19 @@
 import { TFetchOptions, THttpOptions } from "@/types";
 import { env } from "../../env";
 
-export const API_BASE_URL = env.API_BASE_URL;
+export const API_BASE_URL =
+  typeof window === "undefined"
+    ? env.API_BASE_URL
+    : env.NEXT_PUBLIC_API_BASE_URL;
 
 class HttpService {
-  constructor(public baseUrl: string) {
+  constructor(public baseUrl: string = API_BASE_URL) {
     this.baseUrl = baseUrl;
   }
 
+  // Get Request
   async get(path?: string, options: THttpOptions = {}) {
-    const url = new URL(this.baseUrl);
-    if (path) {
-      url.pathname = path;
-    }
+    const url = new URL(this.getUrl(path || ""));
 
     const transformedOptions = this.buildOptions(url, options);
 
@@ -24,12 +25,10 @@ class HttpService {
     const data = await res.json();
     return data;
   }
-  async post(path: string, payload: any, options: THttpOptions = {}) {
-    const url = new URL(this.baseUrl);
-    if (path) {
-      url.pathname = path;
-    }
 
+  // Post request
+  async post(path: string, payload: any, options: THttpOptions = {}) {
+    const url = new URL(this.getUrl(path || ""));
     const { headers, ...rest } = this.buildOptions(url, options);
 
     const res = await fetch(url.toString(), {
@@ -45,11 +44,9 @@ class HttpService {
     return data;
   }
 
+  // Put Request
   async put(path: string, payload: any, options: THttpOptions = {}) {
-    const url = new URL(this.baseUrl);
-    if (path) {
-      url.pathname = path;
-    }
+    const url = new URL(this.getUrl(path || ""));
 
     const { headers, ...rest } = this.buildOptions(url, options);
 
@@ -66,11 +63,9 @@ class HttpService {
     return data;
   }
 
+  // Patch Request
   async patch(path: string, payload: any, options: THttpOptions = {}) {
-    const url = new URL(this.baseUrl);
-    if (path) {
-      url.pathname = path;
-    }
+    const url = new URL(this.getUrl(path || ""));
 
     const { headers, ...rest } = this.buildOptions(url, options);
 
@@ -87,11 +82,9 @@ class HttpService {
     return data;
   }
 
+  // Delete request
   async delete(path: string, payload: any = null, options: THttpOptions = {}) {
-    const url = new URL(this.baseUrl);
-    if (path) {
-      url.pathname = path;
-    }
+    const url = new URL(this.getUrl(path || ""));
 
     const { headers, ...rest } = this.buildOptions(url, options);
 
@@ -108,6 +101,14 @@ class HttpService {
     });
     const data = await res.json();
     return data;
+  }
+
+  private getUrl(path: string): string {
+    const baseUrl = this.baseUrl.endsWith("/")
+      ? this.baseUrl
+      : `${this.baseUrl}/`;
+    const cleanPath = path.startsWith("/") ? path.slice(1) : path;
+    return new URL(cleanPath, baseUrl).toString();
   }
 
   buildOptions(url: URL, options: THttpOptions) {

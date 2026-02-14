@@ -38,7 +38,6 @@ export default function SignUpRestaurantPage() {
     },
     onSubmit: async ({ value }) => {
       console.log("Form submitted:", value);
-      // Handle sign in logic here
     },
   });
 
