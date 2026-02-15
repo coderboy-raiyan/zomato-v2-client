@@ -8,6 +8,7 @@ import { useForm } from "@tanstack/react-form";
 import gsap from "gsap";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const emailSchema = z.email("Invalid email address");
@@ -38,11 +39,16 @@ export default function SignUpRestaurantPage() {
       password: "",
     },
     onSubmit: async ({ value }) => {
+      const toaster = toast.loading("Please wait...");
       try {
         const res = await createProvider(value);
-        console.log(res);
-      } catch (error) {
-        console.log(error);
+        if (!res?.success) {
+          toast.error(res?.message, { id: toaster });
+          return;
+        }
+        toast.success("Signed up successfully!", { id: toaster });
+      } catch (error: any) {
+        toast.error(error?.message, { id: toaster });
       }
     },
   });
