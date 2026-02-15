@@ -1,5 +1,6 @@
 "use client";
 
+import { createProvider } from "@/app/actions/auth.action";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,7 +38,12 @@ export default function SignUpRestaurantPage() {
       password: "",
     },
     onSubmit: async ({ value }) => {
-      console.log("Form submitted:", value);
+      try {
+        const res = await createProvider(value);
+        console.log(res);
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
 
